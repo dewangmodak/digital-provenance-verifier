@@ -4,7 +4,6 @@ const { successResponse } = require("../utils/responseHandler"); // 👈 1. Impo
 // User: Fetch history for the logged-in user only
 exports.getUserHistory = async (req, res, next) => { // 👈 2. Added next
   try {
-    // 👈 3. Added deleted_at: null filter
     const reports = await VerificationReport.find({ user_id: req.user.id, deleted_at: null })
       .sort({ verified_at: -1 });
       

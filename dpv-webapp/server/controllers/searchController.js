@@ -10,7 +10,7 @@ exports.searchSimilarMedia = async (req, res) => {
 
     const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
 
-    // 1️⃣ Generate hashes via AI
+    // Generate hashes via AI
     const aiResponse = await axios.post(
       "http://localhost:8000/ai/generate-hashes",
       { file_url: fileUrl }
@@ -18,12 +18,12 @@ exports.searchSimilarMedia = async (req, res) => {
 
     const { phash, dhash } = aiResponse.data;
 
-    // 2️⃣ Fetch all stored media
+    // Fetch all stored media
     const [rows] = await Media.getAllHashes();
 
     const matches = [];
 
-    // 3️⃣ Compare hashes
+    // Compare hashes
     for (const media of rows) {
       const pDist = hammingDistance(phash, media.phash);
       const dDist = hammingDistance(dhash, media.dhash);
@@ -41,7 +41,7 @@ exports.searchSimilarMedia = async (req, res) => {
       }
     }
 
-    // 4️⃣ Sort by similarity
+    //Sort by similarity
     matches.sort((a, b) => a.similarity_score - b.similarity_score);
 
     return res.json({

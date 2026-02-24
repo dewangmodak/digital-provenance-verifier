@@ -1,51 +1,11 @@
-# ========================
-# 1. Environment & Secrets
-# ========================
-# Never commit your database passwords, AWS keys, or JWT secrets!
-.env
-.env.*
-secrets.json
-
-# ========================
-# 2. Node.js (Backend & Frontend)
-# ========================
-# Dependency directories
+# Node
 node_modules/
-# Logs and diagnostic reports
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-# Build artifacts
-build/
-dist/
-.npm/
+.env
 
-# ========================
-# 3. Python (AI Microservice)
-# ========================
-# Virtual environments
+# Python (For later)
 venv/
-env/
-.venv/
-# Compiled byte-code and caches
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-.pytest_cache/
-.coverage
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
 
-# ========================
-# 4. OS & Editor Files
-# ========================
-# System-generated files
+# OS Files
 .DS_Store
-Thumbs.db
-# IDE configuration files
-.vscode/
-.idea/

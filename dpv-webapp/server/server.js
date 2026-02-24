@@ -61,6 +61,8 @@ app.use("/api/v1/verify", verifyRoutes);
 app.use("/api/v1/history", historyRoutes);
 app.use("/uploads", express.static(uploadDir));
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 /**

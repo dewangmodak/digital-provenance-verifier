@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "DPV.AI Integrity Checker",
+  "version": "1.0",
+  "description": "Right-click any image on the web to verify its AI generation status and provenance.",
+  "permissions": [
+    "contextMenus",
+    "storage",
+    "notifications"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "http://localhost:5000/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "DPV Verification Results"
+  }
+}

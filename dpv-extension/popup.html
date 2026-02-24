@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DPV.AI Extension</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { width: 350px; min-height: 400px; padding: 16px; font-family: sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  
+  <div class="flex items-center justify-between border-b pb-3 mb-4">
+    <h1 class="text-2xl font-black text-blue-600 tracking-tighter">DPV.AI</h1>
+    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-md font-bold">Extension</span>
+  </div>
+
+  <div class="mb-6 bg-white p-3 rounded-lg shadow-sm border border-gray-200">
+    <label class="block text-xs font-bold text-gray-500 mb-1">API JWT Token (From Web App)</label>
+    <div class="flex gap-2">
+      <input type="password" id="tokenInput" class="flex-1 text-xs px-2 py-1 border rounded focus:ring-1 focus:ring-blue-500" placeholder="Paste eyJhbGciOi...">
+      <button id="saveTokenBtn" class="bg-gray-900 text-white text-xs font-bold px-3 py-1 rounded hover:bg-gray-800">Save</button>
+    </div>
+    <p id="tokenStatus" class="text-xs text-green-600 mt-1 hidden">Token saved securely!</p>
+  </div>
+
+  <div id="resultsArea" class="hidden">
+    <h2 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Latest Scan Result</h2>
+    
+    <div class="mb-4">
+      <img id="scannedImage" src="" class="w-full h-32 object-cover rounded-lg border border-gray-200 shadow-sm">
+    </div>
+
+    <div id="aiStatusBox" class="p-3 rounded-lg mb-3 border">
+      <p class="text-[10px] font-extrabold uppercase text-gray-500 mb-1">AI Status</p>
+      <p id="aiLabel" class="text-lg font-black tracking-tight"></p>
+      <p id="aiScore" class="text-xs mt-1 font-medium"></p>
+    </div>
+
+    <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg">
+      <p class="text-[10px] font-extrabold uppercase text-gray-500 mb-1">Database Match</p>
+      <p id="dbMatch" class="text-sm font-bold text-blue-700 leading-tight"></p>
+    </div>
+  </div>
+
+  <div id="emptyState" class="text-center py-10">
+    <p class="text-gray-400 text-sm">Right-click an image on any website to scan it.</p>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

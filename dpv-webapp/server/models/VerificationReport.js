@@ -6,6 +6,14 @@ const VerificationReportSchema = new mongoose.Schema({
     phash: { type: String, required: true },
     dhash: { type: String, required: true },
   },
+  
+  // 🤖 NEW: AI Deepfake Detection Support
+  ai_detection: {
+    is_ai_generated: { type: Boolean, required: true },
+    confidence_score: { type: String, required: true },
+    raw_label: { type: String, required: true }
+  },
+
   overall_verdict: { type: String, required: true },
   total_matches: { type: Number, required: true },
   matches: [
@@ -24,10 +32,9 @@ const VerificationReportSchema = new mongoose.Schema({
   deleted_at: { type: Date, default: null } 
 });
 
+// Indexes for fast querying
 VerificationReportSchema.index({ user_id: 1, verified_at: -1 });
-
 VerificationReportSchema.index({ overall_verdict: 1 });
-
 VerificationReportSchema.index({ deleted_at: 1 });
 
 module.exports = mongoose.model(

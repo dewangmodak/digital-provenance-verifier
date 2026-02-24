@@ -1,0 +1,21 @@
+2026-02-22 16:05:54 [error]: Invalid file type. Only JPEG, JPG, PNG, and WEBP are allowed. - POST /api/v1/media/register - IP: ::1
+2026-02-22 16:21:28 [error]: Cannot destructure property 'phash' of 'req.body' as it is undefined. - POST /api/v1/verify - IP: ::1
+2026-02-23 09:09:29 [error]: Unexpected field - POST /api/v1/verify - IP: ::1
+2026-02-23 09:09:30 [error]: Unexpected field - POST /api/v1/verify - IP: ::1
+2026-02-23 11:38:29 [error]: Unexpected field - POST /api/v1/media/register - IP: ::1
+2026-02-23 11:38:36 [error]: Unexpected field - POST /api/v1/media/register - IP: ::1
+2026-02-23 12:50:45 [error]: Unexpected field - POST /api/v1/media/register - IP: ::1
+2026-02-23 13:47:45 [error]: Unexpected field - POST /api/v1/media/register - IP: ::1
+2026-02-23 13:48:59 [error]:  - POST /api/v1/verify - IP: ::1
+2026-02-23 13:49:00 [error]:  - POST /api/v1/verify - IP: ::1
+2026-02-23 13:52:09 [error]: Request failed with status code 500 - POST /api/v1/verify - IP: ::1
+2026-02-23 13:52:10 [error]: Request failed with status code 500 - POST /api/v1/verify - IP: ::1
+2026-02-23 13:52:10 [error]: Request failed with status code 500 - POST /api/v1/verify - IP: ::1
+2026-02-23 13:52:10 [error]: Request failed with status code 500 - POST /api/v1/verify - IP: ::1
+2026-02-23 13:54:20 [error]: Request failed with status code 500 - POST /api/v1/verify - IP: ::1
+2026-02-23 13:54:21 [error]: Request failed with status code 500 - POST /api/v1/verify - IP: ::1
+2026-02-23 13:54:21 [error]: Request failed with status code 500 - POST /api/v1/verify - IP: ::1
+2026-02-23 13:54:21 [error]: Request failed with status code 500 - POST /api/v1/verify - IP: ::1
+2026-02-23 13:54:22 [error]: Request failed with status code 500 - POST /api/v1/verify - IP: ::1
+2026-02-23 13:56:43 [error]: Request failed with status code 500 - POST /api/v1/verify - IP: ::1
+2026-02-23 14:09:38 [error]: Unexpected field - POST /api/v1/media/register - IP: ::1
