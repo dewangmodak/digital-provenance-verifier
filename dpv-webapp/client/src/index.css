@@ -2,8 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-/* We can add a custom background color for the whole app here */
+:root {
+  --primary-bg: #0B1120;     /* Deep Midnight */
+  --card-bg: #111827;        /* Slate Navy */
+  --border-slate: #1F2937;   /* Soft Slate */
+  --primary-action: #3B82F6; /* Royal Blue */
+  --ai-accent: #A78BFA;      /* Electric Violet */
+  --success-emerald: #22C55E;/* Emerald */
+  --danger-crimson: #F43F5E; /* Crimson Rose */
+}
+
 body {
-  background-color: #f3f4f6; /* A nice, subtle gray background */
-  margin: 0;
+  background-color: var(--primary-bg);
+  color: #E5E7EB; /* Soft White */
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 🛑 FIX: Eliminate the blinking text line / focus outlines */
+a, button, input {
+  outline: none !important;
+  box-shadow: none !important;
 }

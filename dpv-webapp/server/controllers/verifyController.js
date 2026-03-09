@@ -8,21 +8,22 @@ const { successResponse, errorResponse } = require("../utils/responseHandler");
 
 function getVerdict(score) {
   if (score === 100) return "ORIGINAL / EXACT MATCH";
-  if (score >= 92) return "VERY CLOSE MATCH"; // Slight crop or color change
-  if (score >= 85) return "POSSIBLY MODIFIED COPY"; // Heavy filter or resize
+  if (score >= 92) return "VERY CLOSE MATCH"; 
+  if (score >= 85) return "POSSIBLY MODIFIED COPY"; 
   return "NOT RELATED"; 
 }
 
 exports.verifyMedia = async (req, res, next) => {
   try {
-    // 1. MUST have a file to perform Deepfake check
     if (!req.file) {
       return errorResponse(res, 400, "Please upload an image file for verification");
     }
 
     const absolutePath = path.resolve(req.file.path);
+    // Create the URL for the query image so the frontend can display it
+    const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
 
-    // 2.Get Deepfake Integrity Check from Python
+    // 1. Get Deepfake Integrity Check from Python
     const integrityResponse = await axios.post(
       "http://localhost:8000/ai/check-image-integrity-local",
       { file_path: absolutePath }
@@ -30,12 +31,8 @@ exports.verifyMedia = async (req, res, next) => {
     
     const aiLabel = integrityResponse.data.label;
     const aiScore = integrityResponse.data.score;
-    
-    // Convert decimal to integer (e.g., 0.95 -> 95)
     const confidencePercentage = Math.round(aiScore * 100);
 
-    // DEMO-DAY FAILSAFE: 
-    // If the AI is not at least 70% confident, we flag it as 'UNCERTAIN' so we never look foolish.
     let finalLabel = aiLabel.toLowerCase();
     if (confidencePercentage < 70) {
         finalLabel = "uncertain - requires manual review";
@@ -47,16 +44,16 @@ exports.verifyMedia = async (req, res, next) => {
       raw_label: finalLabel
     };
 
-    // 3. 🔍 Get Hashes from Python
+    // 2. 🔍 Get Hashes from Python
     const hashResponse = await axios.post(
       "http://localhost:8000/ai/generate-hashes-local",
       { file_path: absolutePath }
     );
     const { phash, dhash } = hashResponse.data;
 
-    // 4. 🕵️ Run the MySQL Provenance DB Match
+    // 3. 🕵️ Run the MySQL Provenance DB Match
     const [rows] = await pool.query(
-      "SELECT id, storage_url, phash, dhash FROM registered_media WHERE deleted_at IS NULL"
+      "SELECT id, storage_url, original_filename, phash, dhash FROM registered_media WHERE deleted_at IS NULL"
     );
 
     const matches = [];
@@ -66,47 +63,44 @@ exports.verifyMedia = async (req, res, next) => {
 
       const phashDist = hammingDistance(phash, media.phash);
       const dhashDist = hammingDistance(dhash, media.dhash);
-
       const similarityScore = computeSimilarityScore(phashDist, dhashDist);
 
-      // ONLY push into the array if the similarity is 85% or higher
       if (similarityScore >= 85) {
         matches.push({
           media_id: media.id,
           storage_url: media.storage_url,
-          phash_distance: phashDist,
-          dhash_distance: dhashDist,
-          similarity_score: similarityScore,
+          filename: media.original_filename,
+          score: similarityScore,            
           verdict: getVerdict(similarityScore),
         });
       }
     }
 
-    matches.sort((a, b) => b.similarity_score - a.similarity_score);
+    matches.sort((a, b) => b.score - a.score);
 
     const overallVerdict =
       matches.length > 0
-        ? getVerdict(matches[0].similarity_score)
+        ? getVerdict(matches[0].score)
         : "NO MATCH FOUND";
 
-    // 5. 📝 Save Complete Report to MongoDB
+    // 4. 📝 Save Complete Report to MongoDB
     await VerificationReport.create({
         user_id: req.user.id, 
+        file_url: fileUrl, 
         query_hashes: { phash, dhash },
-        ai_detection: aiDetection, // Saving the deepfake info to DB!
+        ai_detection: aiDetection,
         overall_verdict: overallVerdict,
         total_matches: matches.length,
-        matches,
+        similarity_details: matches, 
         verified_at: new Date(),
     });
 
-    // 6. Return standard success response
     return successResponse(res, 200, "Verification completed successfully", {
-      ai_detection: aiDetection, // Sent to Frontend
-      query_hashes: { phash, dhash },
+      ai_detection: aiDetection,
+      file_url: fileUrl,
       total_matches: matches.length,
       overall_verdict: overallVerdict,
-      matches,
+      similarity_details: matches,
     });
 
   } catch (err) {
@@ -117,7 +111,6 @@ exports.verifyMedia = async (req, res, next) => {
 exports.getMyVerificationHistory = async (req, res, next) => {
   try {
     const userId = req.user.id;
-
     const reports = await VerificationReport.find({ user_id: userId, deleted_at: null })
       .sort({ verified_at: -1 });
 
@@ -127,5 +120,27 @@ exports.getMyVerificationHistory = async (req, res, next) => {
     });
   } catch (err) {
     next(err); 
+  }
+};
+
+exports.deleteVerificationReport = async (req, res, next) => {
+  try {
+    const reportId = req.params.id;
+    const userId = req.user.id;
+
+    // Soft delete: Find the report and set 'deleted_at' to right now
+    const report = await VerificationReport.findOneAndUpdate(
+      { _id: reportId, user_id: userId, deleted_at: null },
+      { deleted_at: new Date() },
+      { new: true }
+    );
+
+    if (!report) {
+      return res.status(404).json({ success: false, message: "Report not found or unauthorized" });
+    }
+
+    return res.status(200).json({ success: true, message: "Report deleted successfully" });
+  } catch (err) {
+    next(err);
   }
 };

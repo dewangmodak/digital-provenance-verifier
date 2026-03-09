@@ -31,7 +31,7 @@ const RegisterMedia = () => {
 
     const formData = new FormData();
     // 💡 Using 'image' here to match our Multer setup. If your media route uses a different word, change it here!
-    formData.append('image', file); 
+    formData.append('file', file); 
 
     try {
       const response = await API.post('/media/register', formData);

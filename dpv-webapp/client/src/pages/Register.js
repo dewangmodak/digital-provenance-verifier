@@ -5,17 +5,38 @@ import API from '../services/api';
 const Register = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
+  const [passwordError, setPasswordError] = useState(''); // NEW: Tracks password strength
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // 🚨 THE REGEX: 8+ chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_#-])[A-Za-z\d@$!%*?&_#-]{8,}$/;
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    // Live Password Validation as they type
+    if (name === 'password') {
+      if (value.length > 0 && !passwordRegex.test(value)) {
+        setPasswordError('Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character (@$!%*?&_#-).');
+      } else {
+        setPasswordError(''); // Clears the error when valid
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    
+    // Final safety check to prevent submitting a weak password
+    if (!passwordRegex.test(formData.password)) {
+      setPasswordError('Please enter a stronger password before registering.');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -30,6 +51,9 @@ const Register = () => {
       setLoading(false);
     }
   };
+
+  // Determines if the button should be locked
+  const isFormValid = formData.name && formData.email && formData.password && !passwordError;
 
   return (
     <div className="flex items-center justify-center pt-10">
@@ -73,16 +97,23 @@ const Register = () => {
               type="password"
               name="password"
               required
-              className="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition"
+              // Changes border to red if there is an error
+              className={`mt-1 block w-full px-4 py-3 bg-gray-50 border rounded-lg focus:ring-2 transition ${passwordError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
               placeholder="••••••••"
               onChange={handleChange}
             />
+            {/* The Warning Message */}
+            {passwordError && (
+              <p className="text-xs text-red-500 mt-2 font-medium leading-tight">
+                {passwordError}
+              </p>
+            )}
           </div>
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-all disabled:bg-gray-400"
+            disabled={loading || !isFormValid}
+            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-all disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {loading ? 'Creating Account...' : 'Register'}
           </button>

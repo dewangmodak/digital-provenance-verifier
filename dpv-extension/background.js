@@ -26,14 +26,14 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       const imageRes = await fetch(imageUrl);
       const blob = await imageRes.blob();
 
-      // 3. Package it for the backend (just like our React app!)
+      // 3. 💡 FIXED: Package it for the backend matching our Multer setup!
       const formData = new FormData();
-      formData.append("image", blob, "extension-upload.jpg");
+      formData.append("file", blob, "extension-upload.jpg");
 
       // 4. Send to Node.js server
       const apiRes = await fetch("http://localhost:5000/api/v1/verify", {
         method: "POST",
-        headers: { "Authorization": `Bearer ${token}` }, // Bouncer pass! NO Content-Type here.
+        headers: { "Authorization": `Bearer ${token}` }, 
         body: formData
       });
 

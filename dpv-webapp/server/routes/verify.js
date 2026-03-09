@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
-const upload = require("../middleware/upload"); // 👈 1. IMPORT MULTER HERE
-const {
-  verifyMedia,
-  getMyVerificationHistory,
+const upload = require("../middleware/upload");
+const { 
+  verifyMedia, 
+  getMyVerificationHistory, 
+  deleteVerificationReport 
 } = require("../controllers/verifyController");
 
 /**
@@ -34,7 +35,6 @@ const {
  * 401:
  * description: Unauthorized
  */
-// 👇 2. ADD upload.single("image") RIGHT HERE!
 router.post("/", auth, upload.single("image"), verifyMedia);
 
 /**
@@ -53,5 +53,8 @@ router.post("/", auth, upload.single("image"), verifyMedia);
  * description: Unauthorized
  */
 router.get("/my-history", auth, getMyVerificationHistory);
+
+// 🗑️ NEW: Soft delete route
+router.delete("/:id", auth, deleteVerificationReport);
 
 module.exports = router;

@@ -16,7 +16,6 @@ module.exports = (req, res, next) => {
     // 3. Decode the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // 🟢 THE FIX IS HERE: Assign the whole decoded object so `role` comes with it!
     req.user = decoded; 
     
     next();

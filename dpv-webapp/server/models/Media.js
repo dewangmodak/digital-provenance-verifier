@@ -41,6 +41,24 @@ const Media = {
       throw error;
     }
   },
+
+  // ✅ 4. NEW: Find all media for a specific user
+  findByUserId: async (userId) => {
+    try {
+      const [rows] = await pool.execute(
+        `
+        SELECT * FROM registered_media 
+        WHERE user_id = ? 
+        ORDER BY id DESC
+        `,
+        [userId] // 💡 Changed ORDER BY created_at to ORDER BY id
+      );
+      return rows;
+    } catch (error) {
+      console.error("Database Error fetching user media:", error);
+      throw error;
+    }
+  },
 };
 
 module.exports = Media;

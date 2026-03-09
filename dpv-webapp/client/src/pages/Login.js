@@ -36,7 +36,7 @@ const Login = () => {
       if (token) {
         // Log them in and teleport to the Dashboard!
         login(user, token);
-        navigate('/dashboard'); 
+        navigate('/home'); 
       } else {
         setError('Login failed: Connected to backend, but no token was returned.');
       }

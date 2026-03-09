@@ -1,5 +1,5 @@
 const axios = require("axios");
-const path = require("path"); // Added to handle file paths
+const path = require("path");
 const Media = require("../models/Media");
 
 exports.registerMedia = async (req, res) => {
@@ -13,7 +13,6 @@ exports.registerMedia = async (req, res) => {
     const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
 
     // 2. 🔍 Call AI service using the LOCAL endpoint
-    // This is faster as Python reads the file directly from your disk
     const aiResponse = await axios.post(
       "http://localhost:8000/ai/generate-hashes-local",
       { file_path: absolutePath }
@@ -22,7 +21,6 @@ exports.registerMedia = async (req, res) => {
     const { phash, dhash } = aiResponse.data;
 
     // 3. 🛑 CHECK DUPLICATE
-    // This uses your custom Hamming distance logic on the database level
     const existing = await Media.findByHashes(phash, dhash);
 
     if (existing) {
@@ -59,6 +57,29 @@ exports.registerMedia = async (req, res) => {
     return res.status(500).json({ 
       success: false, 
       message: "Server error during media processing",
+      error: err.message 
+    });
+  }
+};
+
+// ✅ NEW FUNCTION: Fetch all registered art for the logged-in user
+exports.getMyMedia = async (req, res) => {
+  try {
+    const userId = req.user.id; 
+
+    // Ask the Media model to find all artworks belonging to this user
+    const userMedia = await Media.findByUserId(userId);
+
+    return res.status(200).json({
+      success: true,
+      count: userMedia.length,
+      data: userMedia
+    });
+  } catch (err) {
+    console.error("Fetch Media Error:", err.message);
+    return res.status(500).json({ 
+      success: false, 
+      message: "Failed to fetch registered media.",
       error: err.message 
     });
   }

@@ -7,6 +7,9 @@ import Register from './pages/Register';
 import Verify from './pages/Verify';
 import Dashboard from './pages/Dashboard';
 import RegisterMedia from './pages/RegisterMedia';
+import MyGallery from './pages/MyGallery';
+import Home from './pages/Home';
+import AdminDashboard from './pages/AdminDashboard';
 
 // Import Components
 import PrivateRoute from './components/PrivateRoute';
@@ -45,6 +48,12 @@ function App() {
                 <Dashboard />
               </PrivateRoute>
             } />
+            
+            <Route path="/admin" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
+
+            <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+
+            <Route path="/my-gallery" element={<PrivateRoute><MyGallery /></PrivateRoute>} />
 
             {/* Default Redirect */}
             <Route path="/" element={<Navigate to="/login" replace />} />
